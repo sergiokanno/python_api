@@ -2,41 +2,41 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-# Cache simulado com um dicionário
-clientes_cache = {}
+# Simulated cache with a dictionary
+clients_cache = {}
 
 @app.route('/')
 def hello_world():
-	return 'Olá, Mundo!'
+	return 'Hello, World!'
 
-@app.route('/cliente', methods=['POST'])
-def adicionar_cliente():
-	dados = request.json
-	if not dados or 'nome' not in dados or 'telefone' not in dados:
-		return jsonify({'erro': 'Os campos nome e telefone são obrigatórios'}), 400
-	telefone = dados['telefone']
-	clientes_cache[telefone] = {'nome': dados['nome'], 'telefone': telefone}
-	return jsonify({'mensagem': 'Cliente adicionado com sucesso'}), 201
+@app.route('/client', methods=['POST'])
+def add_client():
+	data = request.json
+	if not data or 'name' not in data or 'phone' not in data:
+		return jsonify({'error': 'The fields name and phone are required'}), 400
+	phone = data['phone']
+	clients_cache[phone] = {'name': data['name'], 'phone': phone}
+	return jsonify({'message': 'Client added successfully'}), 201
 
-@app.route('/cliente/<telefone>', methods=['GET'])
-def consultar_cliente(telefone):
-	cliente = clientes_cache.get(telefone)
-	if cliente:
-		return jsonify(cliente), 200
+@app.route('/client/<phone>', methods=['GET'])
+def consult_client(phone):
+	client = clients_cache.get(phone)
+	if client:
+		return jsonify(client), 200
 	else:
-		return jsonify({'erro': 'Cliente não encontrado'}), 404
+		return jsonify({'error': 'Client not found'}), 404
 
 
-@app.route('/clientes/<iniciais>', methods=['GET'])
-def consultar_clientes_por_iniciais(iniciais):
-	clientes_filtrados = [
-		cliente for cliente in clientes_cache.values()
-		if cliente['nome'].lower().startswith(iniciais.lower())
+@app.route('/clients/<initials>', methods=['GET'])
+def consult_clients_by_initials(initials):
+	filtered_clients = [
+		client for client in clients_cache.values()
+		if client['name'].lower().startswith(initials.lower())
 	]
-	if clientes_filtrados:
-		return jsonify(clientes_filtrados), 200
+	if filtered_clients:
+		return jsonify(filtered_clients), 200
 	else:
-		return jsonify({'mensagem': 'Nenhum cliente encontrado com essas iniciais'}), 404
+		return jsonify({'message': 'No clients found with these initials'}), 404
 
 if __name__ == '__main__':
 	app.run(debug=True, host='0.0.0.0')
